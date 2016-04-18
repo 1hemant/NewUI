@@ -38,9 +38,28 @@
               <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
                 <span class="title">Title</span>
                 <paper-icon-button icon="refresh"></paper-icon-button>
-                <paper-icon-button icon="more-vert">+</paper-icon-button>
+                <div>
+                <paper-menu-button>
+                    <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <paper-item>Share</paper-item>
+                        <paper-item>Settings</paper-item>
+                        <paper-item>Help</paper-item>
+                      </paper-menu>
+                </paper-menu-button>
+                </div>
             </paper-toolbar>
             <div> Main content... </div>
+                <div>
+                <paper-menu-button>
+                  <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                  <paper-menu class="dropdown-content">
+                    <paper-item>Share</paper-item>
+                    <paper-item>Settings</paper-item>
+                    <paper-item>Help</paper-item>
+                  </paper-menu>
+                </paper-menu-button>
+                </div>
           </paper-header-panel>
         </paper-drawer-panel>
     </template>

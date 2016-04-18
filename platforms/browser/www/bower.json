@@ -28,6 +28,7 @@
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.4",
     "iron-icons": "PolymerElements/iron-icons#^1.1.3",
     "paper-menu": "PolymerElements/paper-menu#^1.2.2",
-    "paper-item": "PolymerElements/paper-item#^1.2.1"
+    "paper-item": "PolymerElements/paper-item#^1.2.1",
+    "paper-menu-button": "PolymerElements/paper-menu-button#^1.1.0"
   }
 }
