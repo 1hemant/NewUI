@@ -1,16 +1,44 @@
+
 <dom-module id="container-element">
     <template>
-        <paper-drawer-panel>
+        <paper-drawer-panel responsive-width="1400px">
           <paper-header-panel drawer>
             <paper-toolbar>
               <div>Application</div>
             </paper-toolbar>
-            <div> Drawer content... </div>
+              <div>
+                <paper-menu>
+                  <paper-submenu>
+                    <paper-item class="menu-trigger">Topics</paper-item>
+                    <paper-menu class="menu-content">
+                      <paper-item>Topic 1</paper-item>
+                      <paper-item>Topic 2</paper-item>
+                      <paper-item>Topic 3</paper-item>
+                    </paper-menu>
+                  </paper-submenu>
+                  <paper-submenu>
+                    <paper-item class="menu-trigger">Faves</paper-item>
+                    <paper-menu class="menu-content">
+                      <paper-item>Fave 1</paper-item>
+                      <paper-item>Fave 2</paper-item>
+                    </paper-menu>
+                  </paper-submenu>
+                  <paper-submenu disabled>
+                    <paper-item class="menu-trigger">Unavailable</paper-item>
+                    <paper-menu class="menu-content">
+                      <paper-item>Disabled 1</paper-item>
+                      <paper-item>Disabled 2</paper-item>
+                    </paper-menu>
+                  </paper-submenu>
+                </paper-menu>
+              </div>
           </paper-header-panel>
           <paper-header-panel main>
             <paper-toolbar>
               <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-              <div>Title</div>
+                <span class="title">Title</span>
+                <paper-icon-button icon="refresh"></paper-icon-button>
+                <paper-icon-button icon="more-vert">+</paper-icon-button>
             </paper-toolbar>
             <div> Main content... </div>
           </paper-header-panel>
@@ -19,6 +47,6 @@
     <script>
         Polymer({
         is:"container-element"
-    })
+    });
     </script>
 </dom-module>
