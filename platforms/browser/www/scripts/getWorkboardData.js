@@ -11,11 +11,17 @@ $.ajax({
      data: JSON.stringify(requestData),
      contentType: 'application/json; charset=utf-8',
      dataType: 'json',
-     //beforeSend: function(xhr){xhr.setRequestHeader('AccessToken',localStorage.getItem("accessToken"));},
+     
+		//beforeSend: function(xhr){xhr.setRequestHeader('AccessToken',localStorage.getItem("accessToken"));},
      success: function(object)
      { 
-               workboardData=object;     
-     }
+               workboardData=object;
+				console.log(workboardData);
+     },
+	error: function(error)
+	{
+		alert('Error in getWorkboardData;' + eval(error));
+	}
   });
   return workboardData;
 }

@@ -17,8 +17,13 @@ $.ajax({
     async: true,
     success: function(object) 
     {
-       kettleData=object;                       
-    }
+       kettleData=object; 
+	console.log(kettleData);	   
+    },
+	error: function(error)
+	{
+		alert('Error in getKettleData;' + eval(error));
+	}
 });
   return kettleData;
 }
