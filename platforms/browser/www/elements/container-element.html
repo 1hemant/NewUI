@@ -9,25 +9,20 @@
               <div>
                 <paper-menu>
                   <paper-submenu>
-                    <paper-item class="menu-trigger">Topics</paper-item>
-                    <paper-menu class="menu-content">
-                      <paper-item>Topic 1</paper-item>
-                      <paper-item>Topic 2</paper-item>
-                      <paper-item>Topic 3</paper-item>
-                    </paper-menu>
+                    <template is="dom-repeat" items="{{data}}" as="dbNames">
+                        <paper-item class="menu-trigger" data-id="{{dbNames.workboardId}}">{{dbNames.name}}</paper-item>
+                        <paper-menu class="menu-content">
+                            <template is="dom-repeat" items="{{dbNames.value}}" as="value">
+                                <paper-item id="{{value.dashboardId}}" on-tap="_onSubItemsTapped">{{value.name}}</paper-item>
+                            </template>
+                        </paper-menu>
+                    </template>
                   </paper-submenu>
                   <paper-submenu>
                     <paper-item class="menu-trigger">Faves</paper-item>
                     <paper-menu class="menu-content">
                       <paper-item>Fave 1</paper-item>
                       <paper-item>Fave 2</paper-item>
-                    </paper-menu>
-                  </paper-submenu>
-                  <paper-submenu disabled>
-                    <paper-item class="menu-trigger">Unavailable</paper-item>
-                    <paper-menu class="menu-content">
-                      <paper-item>Disabled 1</paper-item>
-                      <paper-item>Disabled 2</paper-item>
                     </paper-menu>
                   </paper-submenu>
                 </paper-menu>
@@ -41,31 +36,71 @@
                 <div>
                 <paper-menu-button>
                     <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                    <iron-dropdown>
                       <paper-menu class="dropdown-content">
-                        <paper-item>Share</paper-item>
+                        <paper-item>Profiles</paper-item>
                         <paper-item>Settings</paper-item>
                         <paper-item>Help</paper-item>
                       </paper-menu>
+                    </iron-dropdown>
                 </paper-menu-button>
                 </div>
             </paper-toolbar>
-            <div> Main content... </div>
-                <div>
-                <paper-menu-button>
-                  <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-                  <paper-menu class="dropdown-content">
-                    <paper-item>Share</paper-item>
-                    <paper-item>Settings</paper-item>
-                    <paper-item>Help</paper-item>
-                  </paper-menu>
-                </paper-menu-button>
-                </div>
+              <section id="home" style="display:block">
+                <div> Main content... </div>
+              </section>
+            <section id="dashboard" style="display:none">
+                <h1>Dashboard</h1>
+                <dashboard-demo></dashboard-demo>
+            </section>  
           </paper-header-panel>
         </paper-drawer-panel>
+        <dashboard-draw></dashboard-draw>
     </template>
     <script>
+        var owner;
         Polymer({
-        is:"container-element"
+        is:"container-element",
+        properties:{
+          userId: {
+          type: String,
+          value: 6
+        },
+        workboard_id:{
+            type: String,
+            value: 3
+        }  
+        },
+            attached:function()
+        {               
+            var self=this; 
+            var requestData ={"data":{"userId":this.userId}};
+             $.ajax({
+                    url: "https://rsh-analytics.thecarecloud.com/repository-service/getRepository",  
+                    type: "POST",
+                    data: JSON.stringify(requestData),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function(object)
+                    {                      
+                        self.data=object.data.dashboards;
+                        owner=object.data.dashboards[0].value[1].owner;
+                    }
+                })
+        },
+        _onSubItemsTapped:function()
+        {
+            $('#home').css("display","none");
+            $('#dashboard').css("display","block");
+            //console.log("_onSubItemsTapped:function called");
+            id=event.target.getAttribute("id");
+            //console.log(event.target.getAttribute("id"));
+            //console.log(owner,"owner");
+            //console.log(id,"id");
+            document.getElementsByTagName('dashboard-draw')[0].createDashboard(owner,id);
+            //console.log(document.getElementsByTagName('dashboard-demo'));
+            //window.alert(event.target.getAttribute("id"));
+        }
     });
     </script>
 </dom-module>
