@@ -2,6 +2,55 @@
 <dom-module id="dashboard-draw">
 
 <template>
+		<div class$="[[dataClass]]" style=" -webkit-box-shadow:0px 1px 4px 0px rgba(0, 0, 0, 0.1);box-shadow:0px 1px 4px 0px rgba(0, 0, 0, 0.1)">
+			 <div class="panel common-drop-shadow bc-panel" id="panelChart">
+				<div class="panel-heading bc-panel">
+				  <h3 class="panel-title">[[heading]]</h3>
+                
+                  <div id="toggleAction" on-tap="bcToggle" class="panel-btn">
+              <span id="iconBc">
+                <i class="fa fa-bars"></i>
+              </span>
+            </div>
+            
+				  <div id="pActions" class="panel-actions">
+				  <a class="panel-action" id="paintBrush" data-toggle="tooltip" title="Picker" data-placement="bottom"><i class="fa fa-paint-brush"></i></a>
+
+
+
+				
+
+					<a class="panel-action icon md-refresh-alt" data-toggle="tooltip" title="Refresh" data-placement="bottom" on-tap="paneRefresh" data-load-type="round-circle"
+					data-load-callback="customRefreshCallback" aria-hidden="true"></a>
+					
+					<a class="panel-action" data-toggle="tooltip" title="Fullscreen" data-placement="bottom" on-tap="panelFullscreen" aria-hidden="true">
+            <i class="icon md-fullscreen"></i>
+          </a>
+				  </div>
+				</div>
+				<div class="panel-body" id="chart">
+				  
+				</div>
+				<div class="panel-loading"><div class="loader-wrapper active"><div class="loader-layer loader-blue-only"><div class="loader-circle-left"><div class="circle"></div></div><div class="loader-circle-gap"></div><div class="loader-circle-right"><div class="circle"></div></div></div></div></div>
+			  </div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
              
     <div id="container" style="width:100%;margin-right:10px" style="display:none">
 
@@ -27,82 +76,94 @@
 
     Polymer({
         is:"dashboard-draw",
+		properties:{
+				localHeight:{
+					type:Number,
+					value:5
+				},
+				dataGsHeight:{
+					type:Number,
+					value:5,
+					notify:true,
+					reflectToAttribute:true
+				},
+				dataClass:{
+					type:String,
+					value:'grid-stack-item-content',
+					readonly:true
+				},
+				configuration:{
+					type:Object,
+					value:function(){
+						return {};
+					}
+				},
+				heading:{
+					type:String,
+					value:'',
+					
+				},
+				subHeading:{
+					type:String,
+					value:'',
+					readonly:true
+				},
+				dataId:{
+					type:String,
+					value:''
+				},
+				data:{
+					type:Object,
+					value:function(){
+						return {};
+					},
+					observer:'__dataChanged'
+				},
+				chartObj: {
+                    type: Object,
+                    value: function(){
+						return {};
+					}
+                }
+		},
         createDashboard:function(userId,workboard_id)
         {
             var self=this;
-            //var requestData = {"data":{"workboard-id":id,"params":{}}}; 
-            console.log(userId);
-            console.log(workboard_id);
+            //var requestData ={"data":{"userId":userId,"workboard-id":workboard_id,"params":{"31":"4"}}}; 
+            //console.log(userId);
+            //console.log(workboard_id);
             self.loadingStart(); 
 			spinner.active = true;
 			spinner.hidden = false;
-			console.log("loading start");
+			//console.log("loading start");
             $.when(
-                    console.log("when block"),
-					/*
                     workboardData = getWorkboardData(userId,workboard_id),
                     visualData = getVisualisationData(userId,workboard_id),
                     kettleData = getKettleData(userId,workboard_id)
-					*/
-					$.ajax({
-						 url: "http://10.90.21.43:8888/workboard-service/getWorkboard?workboard=".concat(id),               
-						 type: "POST",
-						 beforeSend: function(xhr){xhr.setRequestHeader('AccessToken',localStorage.getItem("accessToken"));},
-						 success: function(object)
-						 { 
-								   workboardData=object;     
-								   // console.log(workboardData);
-						 }
-					  }),
-
-					$.ajax({
-						url: "http://10.90.21.43:8888/visualization-service/getVisualizationData?workboard_id=".concat(id),                
-						type: "POST",
-						beforeSend: function(xhr){xhr.setRequestHeader('AccessToken',localStorage.getItem("accessToken"));},
-						success: function(object)
-						{ 
-						   visualData=object;
-							//vData=object;
-							//console.log(visualData);
-						}
-					 }),
-					$.ajax({
-						url: 'http://10.90.21.43:8888/kettle-service/kettle',
-						type: 'POST',
-						beforeSend: function(xhr){xhr.setRequestHeader('AccessToken',localStorage.getItem('accessToken'));},
-						data: JSON.stringify(requestData),
-						contentType: 'application/json; charset=utf-8',
-						dataType: 'json',
-						timeout:300000,
-						async: true,
-						success: function(object) 
-						{
-						   kettleData=object; 
-						   // console.log(kettleData);
-							//self.processDashboardData();
-						}
-					})
+					
 			).done(function(){
                      self.loadingStop();
 					spinner.active = false;
 					spinner.hidden = true;
-                     console.log("Loading stop");
+                     //console.log("Loading stop");
                  });
             $('#container').css("display","block");
-            //self.startfunction(workboardData,visualData,kettleData);
-            //console.log("I am here");
             self.createDashboard1();
         
         },
         createDashboard1:function()
         {    
-            console.log("createDashboard1:function");
+            //console.log("createDashboard1:function");
               var self=this;
               $.each(workboardData.data,function(index,value)
               {
-               
-                    workboard.push(value.configuration);
-                    console.log(workboard);
+               //console.log(index);
+			   
+					workboard.push(value.configuration);
+					//console.log("wd");
+					//console.log(workboardData)
+					self.configuration=workboardData.data;
+                    //console.log(workboard);
                     workboardColumnInfo.push(workboardData.data[index].configuration.columnInfo);
                     $.each(visualData.data,function(i,e)
                    {
@@ -114,32 +175,88 @@
                           if(index==i)
                               kettle.push(e); 
                    });
-                   //console.log(JSONfn.stringify(visualData[index].configuration.result));
-                   option = JSONfn.stringify(visualData.data[index].configuration.result);
-
-                    //self.processChartData(index,workboard,visualisation,kettle,option,workboardColumnInfo);             
-					self.draw();
+				   this.dataId = index;
+				   //self.normalize(visualData,index,kettleData);
+					//console.log(JSONfn.stringify(visualData[index].configuration.result));
+					//option = JSONfn.stringify(visualData.data[index].configuration.result);
+					//self.processChartData(index,workboard,visualisation,kettle,option,workboardColumnInfo);             
+					self.draw(index);
               }); 
         },
-		draw: function(e){
+		draw: function(dataId){
 			var self=this;
 			//this.lodingStart();
 			try{
-				var visualization=JSONfn.parse(this.visualData);
-				if(this.data.hasOwnProperty(this.dataId)&& typeof(this.data[this.dataId])=== 'object' && visualization.hasOwnProperty(this.dataId) && typeof(visualization[this.dataId]) === 'object'){
-					var options = this.normalize(visualization[this.dataId],this.customPreProcessor(this.data[this.dataId].resultSet,this.configuration));
-						if(typeof this.chartObj !== 'undefined' && Object.keys(this.chartObj).length){
-							this.chartObj.destroy();
-						}
-				}
-			}catch(e){
-				console.log(e);
+				//var visualization=JSONfn.parse(this.visualData);
+				var visualization=visualData.data;
+				if(kettleData.data.hasOwnProperty(dataId)  && visualization.hasOwnProperty(dataId) ){
+				//console.log("here")
+				//console.log(this.configuration[dataId])
+				var options=this.normalize(visualization[dataId],this.customPreProcessor(kettleData.data[dataId].resultSet,this.configuration[dataId].configuration.columnInfo));
+				
+					if(typeof this.chartObj !== 'undefined' && Object.keys(this.chartObj).length) {
+						this.chartObj.destroy();
+					}
+						this.chartObj=new Highcharts[visualization[this.dataId].configuration.chartType](options,function(){
+							//self.resize();
+							//self.loadingStop();
+
+						});
+						
+					}
 			}
-		},
+			catch(e){
+				console.error(e)
+			}
+		},		
 		customPreProcessor:function(data,temp){
 			var func=new Function('data',atob(temp));
 			return func(data);
 		},
+		normalize:function(visualization,data){
+		console.log("in normalize func");
+		//console.log(visualization);
+			var result=visualization.configuration.result;
+			
+			result['title']={text:""};
+			console.log("result");
+			 var chart= $(this.$.panelChart); 
+			if(result.hasOwnProperty('chart')){
+			  delete result.chart['renderTo'];
+					result.chart.renderTo=this.$.chart;
+					result.chart['width']=(chart.width()-50);
+					result.chart['height']=(chart.height()-50);
+					//result.chart['options3d']={enabled: true,alpha: 15,beta: 15,depth: 50,viewDistance: 25};
+			  }else{
+				 result.chart={
+				  renderTo: this.$.chart,
+				  width:chart.width()-50,
+				  height:(chart.height()-50),
+				}
+			  }
+				result['credits']={"enabled": false};
+				result["exporting"]={enabled:false};
+				result['series']=data.series;
+				if(data.hasOwnProperty('xAxisCategories') && data['xAxisCategories'].length){
+					if(result.hasOwnProperty('xAxis')){
+						result['xAxis'].categories=data['xAxisCategories'];
+					}else{
+						result['xAxis']={categories:data['xAxisCategories']};
+					}
+				}
+				
+				if(data.hasOwnProperty('subtitleText') && data['subtitleText'].length){
+					if(result.hasOwnProperty('subtitle')){
+						result['subtitle'].text=data['subtitleText'];
+					}else{
+						result['subtitle']={text:data['subtitleText']};
+					}
+				}
+				
+				return result;
+		},
+
+
       processChartData:function(key,workboard,visualisation,kettle,option,workboardColumnInfo)
         {
             var self=this;
