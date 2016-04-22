@@ -68,11 +68,13 @@
     //var vData;
     var workboard=[];
     var visualisation=[];
+	var visualization;
     var kettle=[]; 
     var workboardDataConfiguration = [];
     var decryptedData = [];
     var kettleResultset = [];		
     var visualisationConfiguration =[];
+	var chartObj;
 
     Polymer({
         is:"dashboard-draw",
@@ -118,13 +120,7 @@
 						return {};
 					},
 					observer:'__dataChanged'
-				},
-				chartObj: {
-                    type: Object,
-                    value: function(){
-						return {};
-					}
-                }
+				}
 		},
         createDashboard:function(userId,workboard_id)
         {
@@ -183,27 +179,43 @@
 					self.draw(index);
               }); 
         },
+		resize:function(){
+			console.log("resize function is called");
+			console.log(chartObj);
+			if(typeof this.chartObj !== 'undefined' && Object.keys(this.chartObj).length){
+				var chart= $(this.$.panelChart);
+				console.log("if part of resize function is called");
+				this.chartObj.setSize(chart.width()-50,chart.height()-50);
+				this.chartObj.reflow();
+			}
+		},
 		draw: function(dataId){
 			var self=this;
 			//this.lodingStart();
 			try{
 				//var visualization=JSONfn.parse(this.visualData);
 				var visualization=visualData.data;
-				if(kettleData.data.hasOwnProperty(dataId)  && visualization.hasOwnProperty(dataId) ){
-				//console.log("here")
-				//console.log(this.configuration[dataId])
-				var options=this.normalize(visualization[dataId],this.customPreProcessor(kettleData.data[dataId].resultSet,this.configuration[dataId].configuration.columnInfo));
-				
-					if(typeof this.chartObj !== 'undefined' && Object.keys(this.chartObj).length) {
-						this.chartObj.destroy();
-					}
-						this.chartObj=new Highcharts[visualization[this.dataId].configuration.chartType](options,function(){
-							//self.resize();
-							//self.loadingStop();
-
-						});
-						
-					}
+				if(kettleData.data.hasOwnProperty(dataId) && typeof(kettleData.data[dataId]) === 'object' && visualization.hasOwnProperty(dataId)  && typeof(visualization[dataId]) === 'object'){
+					console.log("here")
+					console.log(this.configuration[dataId])
+					var options=this.normalize(visualization[dataId],this.customPreProcessor(kettleData.data[dataId].resultSet,this.configuration[dataId].configuration.columnInfo));
+					
+						if(typeof this.chartObj !== 'undefined' && Object.keys(this.chartObj).length) {
+							this.chartObj.destroy();
+						}
+							console.log(visualization[dataId].configuration.chartType);
+							console.log("At the end ");
+							console.log(options);
+							console.log(visualization[dataId].configuration.chartType);
+							chartObj=new Highcharts[visualization[dataId].configuration.chartType](options,function(){
+								
+								self.resize();
+								//self.loadingStop();
+							});
+							console.log("chartobj")
+							console.log(chartObj)
+							
+				}
 			}
 			catch(e){
 				console.error(e)
@@ -219,7 +231,6 @@
 			var result=visualization.configuration.result;
 			
 			result['title']={text:""};
-			console.log("result");
 			 var chart= $(this.$.panelChart); 
 			if(result.hasOwnProperty('chart')){
 			  delete result.chart['renderTo'];
@@ -252,7 +263,8 @@
 						result['subtitle']={text:data['subtitleText']};
 					}
 				}
-				
+				console.log("result");
+				console.log(result);
 				return result;
 		},
 
@@ -326,14 +338,14 @@
             var chart1 = new Highcharts.Chart(option);
         },
 
-        loadingStart: function(){
-            console.log("Loader function called");
-            document.getElementById('loader').style.display="block";
-        },
-        loadingStop: function(){
-            console.log("Loader function stopped");
-            document.getElementById('loader').style.display="none";
-        }
+       loadingStart: function(){
+           //console.log("Loader function called");
+           //document.getElementById('loader').style.display="block";
+       },
+       loadingStop: function(){
+           //console.log("Loader function stopped");
+           //document.getElementById('loader').style.display="none";
+       }
     })
 </script>
 </dom-module>
