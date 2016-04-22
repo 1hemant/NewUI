@@ -7,26 +7,8 @@
 				<div class="panel-heading bc-panel">
 				  <h3 class="panel-title">[[heading]]</h3>
                 
-                  <div id="toggleAction" on-tap="bcToggle" class="panel-btn">
-              <span id="iconBc">
-                <i class="fa fa-bars"></i>
-              </span>
-            </div>
-            
-				  <div id="pActions" class="panel-actions">
-				  <a class="panel-action" id="paintBrush" data-toggle="tooltip" title="Picker" data-placement="bottom"><i class="fa fa-paint-brush"></i></a>
 
 
-
-				
-
-					<a class="panel-action icon md-refresh-alt" data-toggle="tooltip" title="Refresh" data-placement="bottom" on-tap="paneRefresh" data-load-type="round-circle"
-					data-load-callback="customRefreshCallback" aria-hidden="true"></a>
-					
-					<a class="panel-action" data-toggle="tooltip" title="Fullscreen" data-placement="bottom" on-tap="panelFullscreen" aria-hidden="true">
-            <i class="icon md-fullscreen"></i>
-          </a>
-				  </div>
 				</div>
 				<div class="panel-body" id="chart">
 				  
@@ -34,30 +16,7 @@
 				<div class="panel-loading"><div class="loader-wrapper active"><div class="loader-layer loader-blue-only"><div class="loader-circle-left"><div class="circle"></div></div><div class="loader-circle-gap"></div><div class="loader-circle-right"><div class="circle"></div></div></div></div></div>
 			  </div>
 		</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-             
-    <div id="container" style="width:100%;margin-right:10px" style="display:none">
-
-    </div>
-
-    <div id="loader" style="display:none"></div>
-    <createHighchart-element><paper-spinner id="spinner" hidden></paper-spinner></createHighchart-element>
+	<div id="container" style="height: 300px;width: 400px"></div>
 </template>
 <script>
     var workboardData = []; //Will be used to store JSON data.
@@ -129,8 +88,8 @@
             //console.log(userId);
             //console.log(workboard_id);
             self.loadingStart(); 
-			spinner.active = true;
-			spinner.hidden = false;
+			//spinner.active = true;
+			//spinner.hidden = false;
 			//console.log("loading start");
             $.when(
                     workboardData = getWorkboardData(userId,workboard_id),
@@ -139,8 +98,8 @@
 					
 			).done(function(){
                      self.loadingStop();
-					spinner.active = false;
-					spinner.hidden = true;
+					//spinner.active = false;
+					//spinner.hidden = true;
                      //console.log("Loading stop");
                  });
             $('#container').css("display","block");
@@ -198,7 +157,7 @@
 				if(kettleData.data.hasOwnProperty(dataId) && typeof(kettleData.data[dataId]) === 'object' && visualization.hasOwnProperty(dataId)  && typeof(visualization[dataId]) === 'object'){
 					console.log("here")
 					console.log(this.configuration[dataId])
-					var options=this.normalize(visualization[dataId],this.customPreProcessor(kettleData.data[dataId].resultSet,this.configuration[dataId].configuration.columnInfo));
+					var options=this.normalize(visualization[dataId],this.customPreProcessor(kettleData.data[dataId].resultSet,this.configuration[dataId].configuration.columnInfo),dataId);
 					
 						if(typeof this.chartObj !== 'undefined' && Object.keys(this.chartObj).length) {
 							this.chartObj.destroy();
@@ -208,7 +167,9 @@
 							console.log(options);
 							console.log(visualization[dataId].configuration.chartType);
 							chartObj=new Highcharts[visualization[dataId].configuration.chartType](options,function(){
-								
+								//
+								console.log("ChartObj");
+								console.log(chartObj);
 								self.resize();
 								//self.loadingStop();
 							});
@@ -225,24 +186,45 @@
 			var func=new Function('data',atob(temp));
 			return func(data);
 		},
-		normalize:function(visualization,data){
+		normalize:function(visualization,data,dataId){
 		console.log("in normalize func");
 		//console.log(visualization);
 			var result=visualization.configuration.result;
 			
 			result['title']={text:""};
-			 var chart= $(this.$.panelChart); 
+			//var chart= $(panelChart); 
+			var div=document.createElement('paper-material');
+			div.setAttribute("elevation","2");
+			$(div).css("background-color","white");
+			$(div).css("height","auto");                
+			$(div).css("margin","10px");
+			$(div).css("margin-bottom","20px");
+			$(div).css("padding","5px");
+			console.log("index is:");
+			console.log(dataId);
+			div.setAttribute("id","id"+dataId);
+			var title = document.createElement("h3");
+			title.innerHTML="Chart";
+			div.appendChild(title);
+			var container=document.getElementById("container");
+			container.appendChild(div);
+			var id ="id"+dataId;
+			console.log("id");
+			console.log(id);
+			console.log(result);
 			if(result.hasOwnProperty('chart')){
 			  delete result.chart['renderTo'];
-					result.chart.renderTo=this.$.chart;
-					result.chart['width']=(chart.width()-50);
-					result.chart['height']=(chart.height()-50);
+					result.chart.renderTo=id;
+					console.log("result.chart.renderTo");
+					console.log(result.chart.renderTo);
+					//result.chart['width']=(chart.width()-50);
+					//result.chart['height']=(chart.height()-50);
 					//result.chart['options3d']={enabled: true,alpha: 15,beta: 15,depth: 50,viewDistance: 25};
 			  }else{
 				 result.chart={
-				  renderTo: this.$.chart,
-				  width:chart.width()-50,
-				  height:(chart.height()-50),
+				  renderTo: id,
+				  //width:chart.width()-50,
+				  //height:(chart.height()-50),
 				}
 			  }
 				result['credits']={"enabled": false};
@@ -263,12 +245,10 @@
 						result['subtitle']={text:data['subtitleText']};
 					}
 				}
-				console.log("result");
-				console.log(result);
 				return result;
 		},
 
-
+/*
       processChartData:function(key,workboard,visualisation,kettle,option,workboardColumnInfo)
         {
             var self=this;
@@ -306,8 +286,8 @@
             else if(workboard[0].chartType=="Chart"){ 
                 console.log("hello");
             }
-        },
-        
+        },*/
+        /*
         createHighchart: function(div){
             window.alert("hi");
                 var option = {
@@ -337,7 +317,7 @@
                 //console.log("I am here");
             var chart1 = new Highcharts.Chart(option);
         },
-
+*/
        loadingStart: function(){
            //console.log("Loader function called");
            //document.getElementById('loader').style.display="block";
